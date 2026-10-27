@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Műtárgyak - Régiségek Online Aukciós Háza{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Műtárgyak és Aukciók</h1>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-6">
+    <input class="form-control" type="search" name="q" value="{{ q }}" placeholder="Keresés...">
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-primary w-100" type="submit">Keresés</button>
+  </div>
+</form>
+
+{% if targyak %}
+<div class="row g-4">
+  {% for t in targyak %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100 shadow-sm {% if t.lezart %}border-secondary bg-light{% elif t.licit_aktiv %}border-danger{% endif %}">
+      <div class="ratio ratio-4x3">
+        {% if t.kep_fajlnev %}
+          <img class="card-img-top object-fit-cover"
+              src="{% static 'Termek_images/'|add:t.kep_fajlnev %}"
+               alt="{{ t.megnevezes }}">
+        {% else %}
+           <div class="d-flex align-items-center justify-content-center bg-secondary text-white">Nincs kép</div>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <h2 class="h5">{{ t.megnevezes }}</h2>
+        <ul class="small text-muted list-unstyled mb-2">
+          
+          {% if t.licit_aktiv or t.lezart %}
+              <li><strong>Aktuális ár:</strong> {{ t.aktualis_ar|default:t.indulo_ar|floatformat:0 }} Ft</li>
+          {% else %}
+              <li><strong>Induló ár:</strong> {{ t.indulo_ar|floatformat:0 }} Ft</li>
+          {% endif %}
+          
+          <li><strong>Árverés ideje:</strong> {{ t.arveres_ideje|date:"Y. m. d. H:i" }}</li>
+
+          <li><strong>Állapot:</strong> 
+            {% if t.lezart %}
+                <span class="badge bg-secondary">ELKELT</span>
+            {% elif t.licit_aktiv %}
+                <span class="badge bg-danger">LICITÁLHATÓ</span>
+            {% else %}
+                <span class="badge bg-warning text-dark">HAMAROSAN</span>
+            {% endif %}
+          </li>
+        </ul>
+        <a href="{% url 'termek_reszlet' t.pk %}" class="btn btn-sm btn-outline-primary stretched-link">Részletek</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav class="mt-4">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}">Előző</a></li>
+    {% endif %}
+    <li class="page-item disabled"><span class="page-link">{{ page_obj.number }}. oldal / {{ page_obj.paginator.num_pages }}</span></li>
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}">Következő</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="alert alert-info">Jelenleg nincs meghirdetett tétel.</div>
+{% endif %}
+
+{% endblock %}

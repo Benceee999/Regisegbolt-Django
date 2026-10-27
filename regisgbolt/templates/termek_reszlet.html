@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ targy.megnevezes }}{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-5">
+       {% if targy.kep_fajlnev %}
+        <img src="{% static 'Termek_images/'|add:targy.kep_fajlnev %}" class="img-fluid rounded-start" alt="{{ targy.megnevezes }}">
+       {% else %}
+        <div class="d-flex align-items-center justify-content-center h-100 bg-secondary text-white">
+            Nincs kép
+        </div>
+       {% endif %}
+    </div>
+    <div class="col-md-7">
+      <div class="card-body">
+        <h1 class="card-title">{{ targy.megnevezes }}</h1>
+        
+        <p class="card-text"><small class="text-muted">Árverés ideje: {{ targy.arveres_ideje|date:"Y. m. d. H:i" }}</small></p>
+        
+        {% if targy.licit_aktiv or targy.lezart %}
+            <h3 class="text-primary">Aktuális ár: {{ targy.aktualis_ar|default:targy.indulo_ar|floatformat:0 }} Ft</h3>
+        {% else %}
+            <h3 class="text-primary">Induló ár: {{ targy.indulo_ar|floatformat:0 }} Ft</h3>
+        {% endif %}
+        {% if targy.lezart %}
+            <div class="alert alert-secondary mt-3">
+                <strong>Az árverés lezárult.</strong><br>
+                Megvásárolta: {{ targy.nyertes.username|default:"Senki" }}<br>
+                Végleges ár: {{ targy.aktualis_ar|floatformat:0 }} Ft
+            </div>
+        {% elif targy.licit_aktiv %}
+            <div class="alert alert-success mt-3">Az árverés folyamatban van!</div>
+            
+            {% if user.is_authenticated %}
+                <form action="{% url 'licit_tetel' targy.pk %}" method="post" class="d-flex gap-2 mt-2">
+                    {% csrf_token %}
+                    <input type="number" name="licit_osszeg" class="form-control" 
+                           placeholder="Összeg (min: {{ targy.aktualis_ar|add:'1' }})" 
+                           min="{{ targy.aktualis_ar|add:'1' }}" required>
+                    <button type="submit" class="btn btn-danger">Licitálok</button>
+                </form>
+            {% else %}
+                <p class="mt-2"><a href="{% url 'login' %}">Jelentkezz be</a> a licitáláshoz!</p>
+            {% endif %}
+
+        {% else %}
+            <div class="alert alert-warning mt-3">Az árverés még nem indult el.</div>
+        {% endif %}
+
+        {% if is_arverezo %}
+            <hr>
+            <h5>Árverező panel</h5>
+            <div class="btn-group">
+                {% if not targy.licit_aktiv and not targy.lezart %}
+                    <a href="{% url 'arveres_inditasa' targy.pk %}" class="btn btn-success">Licit indítása</a>
+                {% elif targy.licit_aktiv %}
+                    <a href="{% url 'arveres_lezarasa' targy.pk %}" class="btn btn-warning">Licit lezárása (Eladva)</a>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <div class="mt-3">
+             <a href="{% url 'termekek' %}" class="btn btn-outline-secondary">Vissza a listához</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

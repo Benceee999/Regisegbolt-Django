@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Az oldal nem található{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-1">404</h1>
+    <p class="lead">Sajnáljuk, a keresett oldal nem található.</p>
+    <a href="{% url 'index' %}" class="btn btn-primary">Vissza a kezdőlapra</a>
+</div>
+{% endblock %}

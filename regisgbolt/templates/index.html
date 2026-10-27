@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Kezdőlap - Régiségek Online Aukciós Háza{% endblock %}
+{% block content %}
+<h1 class="mb-3">Üdvözlünk!</h1>
+<p class="lead">Különleges festmények, ékszerek és porcelánok online aukción.</p>
+
+<p>
+A <strong>Régiségek Online Aukciós Háza</strong> azzal a céllal jött létre, hogy a műtárgyak, antik tárgyak és gyűjtemények világát mindenki számára elérhetővé tegye. 
+Kínálatunkban a klasszikus és modern festészet remekei, ritka ékszerek, értékes porcelánok és egyedi bútordarabok várják új tulajdonosaikat.  
+</p>
+
+<p>
+Platformunk biztonságos, átlátható és kényelmes módot kínál a vásárlásra és értékesítésre egyaránt.  
+Hiszünk abban, hogy minden tárgy egy történetet mesél el - mi pedig segítünk abban, hogy ezek a történetek új otthonra találjanak.
+</p>
+
+<a class="btn btn-primary" href="{% url 'termekek' %}">Műtárgyak megtekintése</a>
+{% endblock %}

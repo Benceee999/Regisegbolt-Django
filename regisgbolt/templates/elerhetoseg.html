@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Elérhetőség és Vélemények - Régiségek Online Aukciós Háza{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <h1 class="h3 mb-3">Elérhetőség</h1>
+        <div class="card border-0 shadow-sm p-4 mb-4">
+            <h5 class="text-primary mb-3">Központi Iroda & Galéria</h5>
+            <p class="mb-2"><strong>Cím:</strong> 1111 Budapest, Múzeum körút 12.</p>
+            <p class="mb-2"><strong>Telefon:</strong> +36 (1) 234-5678</p>
+            <p class="mb-2"><strong>E-mail:</strong> info@regisegbolt-aukcio.hu</p>
+            <p class="mb-0 text-muted small mt-2">Nyitvatartás: Hétfő - Péntek: 10:00 - 18:00</p>
+        </div>
+
+        <div class="card border-0 shadow-sm p-4">
+            <h5 class="mb-3">Írd meg a véleményed!</h5>
+            <form method="post">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="{{ form.nev.id_for_label }}" class="form-label fw-bold">{{ form.nev.label }} *</label>
+                    {{ form.nev }}
+                    {{ form.nev.errors }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">{{ form.email.label }}</label>
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.uzenet.id_for_label }}" class="form-label fw-bold">{{ form.uzenet.label }} *</label>
+                    {{ form.uzenet }}
+                    {{ form.uzenet.errors }}
+                </div>
+
+                <button class="btn btn-primary w-100 fw-bold" type="submit">Vélemény elküldése</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <h2 class="h4 mb-3">Korábbi vélemények</h2>
+        {% if velemenyek %}
+            <div class="d-flex flex-column gap-3">
+                {% for v in velemenyek %}
+                    <div class="card border-0 shadow-sm p-3">
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                            <strong class="text-dark">{{ v.nev }}</strong>
+                            <small class="text-muted">{{ v.kuldes_datuma|date:"Y.m.d. H:i" }}</small>
+                        </div>
+                        <div class="text-secondary">
+                            {{ v.uzenet|linebreaksbr }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-light border text-muted">Még nem érkezett vélemény. Legyél te az első!</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
